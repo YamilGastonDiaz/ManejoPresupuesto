@@ -1,0 +1,152 @@
+﻿using ManejoPresupuesto.Interface;
+using ManejoPresupuesto.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+
+namespace ManejoPresupuesto.Controllers
+{
+    public class TipoCuentasController : Controller
+    {
+        private readonly ITipoCuentasReposritory _reposritory;
+        private readonly IUsuarioRepository _usuarioRepository;
+
+        public TipoCuentasController(ITipoCuentasReposritory reposritory, IUsuarioRepository usuarioRepository)
+        {
+            _reposritory = reposritory;
+            _usuarioRepository = usuarioRepository;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var tipoCuentas = await _reposritory.Obtener(id_Usuario);
+
+            return View(tipoCuentas);
+        }
+
+        public ActionResult Crear()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Crear(TipoCuenta tipoCuenta)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(tipoCuenta);
+            }
+
+            tipoCuenta.Id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+
+            var existeTipoCuenta = await _reposritory.Existe(tipoCuenta.NombreTipoCuenta, tipoCuenta.Id_Usuario);
+
+            if (existeTipoCuenta)
+            {
+                ModelState.AddModelError(nameof(tipoCuenta.NombreTipoCuenta), $"El nombre {tipoCuenta.NombreTipoCuenta} ya existe.");
+
+                return View(tipoCuenta);
+            }
+
+            await _reposritory.Crear(tipoCuenta);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Editar(int id)
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var tipoCuenta = await _reposritory.ObtenerPorId(id, id_Usuario);
+
+            if (tipoCuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+
+            return View(tipoCuenta);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Editar(TipoCuenta tipoCuenta)
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var tipoCuentaExiste = await _reposritory.ObtenerPorId(tipoCuenta.TipoCuenta_Id, id_Usuario);
+
+            if (tipoCuentaExiste is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+
+            await _reposritory.Actualizar(tipoCuenta);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Borrar(int id)
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var tipoCuenta = await _reposritory.ObtenerPorId(id, id_Usuario);
+
+            if (tipoCuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+
+            return View(tipoCuenta);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> BorrarTipoCuenta(int tipoCuenta_Id)
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var tipoCuenta = await _reposritory.ObtenerPorId(tipoCuenta_Id, id_Usuario);
+
+            if (tipoCuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+
+            await _reposritory.Borrar(tipoCuenta_Id);
+
+            return RedirectToAction("Index");  
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerificarexisteTipoCuenta(string nombreTipoCuenta)
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var existeTipoCuenta = await _reposritory.Existe(nombreTipoCuenta, id_Usuario);
+
+            if (existeTipoCuenta)
+            {
+                return Json($"El nombre {nombreTipoCuenta} ya existe");
+            }
+
+            return Json(true);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Ordenar([FromBody] int[] ids)
+        {
+            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var tiposCuenta = await _reposritory.Obtener(id_Usuario);
+            var idsTipoCuenta = tiposCuenta.Select(x => x.TipoCuenta_Id);
+
+            var idsNoPertenecenAlUsuario = ids.Except(idsTipoCuenta).ToList();
+
+            if (idsNoPertenecenAlUsuario.Count > 0)
+            {
+                return Forbid();
+            }
+
+            var tipoCuentasOrdenados = ids.Select((valor, indice) =>
+                                       new TipoCuenta() { TipoCuenta_Id = valor, Orden = indice + 1 })
+                                      .AsEnumerable();
+
+            await _reposritory.Ordenar(tipoCuentasOrdenados);
+
+            return Ok();
+        }
+    }
+}
