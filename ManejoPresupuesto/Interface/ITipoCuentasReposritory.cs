@@ -5,11 +5,11 @@ namespace ManejoPresupuesto.Interface
     public interface ITipoCuentasReposritory
     {
         Task Crear(TipoCuenta tipoCuenta);
-        Task<bool> Existe(string nombre, int idUser);
-        Task<IEnumerable<TipoCuenta>> Obtener(int idUser);
+        Task<bool> Existe(string nombre, int idUsuario);
+        Task<IEnumerable<TipoCuenta>> Obtener(int idUsuario);
         Task Actualizar(TipoCuenta tipoCuenta);
-        Task<TipoCuenta> ObtenerPorId(int tipoCuenta_Id, int id_Usuario);
-        Task Borrar(int tipoCuenta_Id);
+        Task<TipoCuenta> ObtenerPorId(int id, int idUsuario);
+        Task Borrar(int id);
         Task Ordenar(IEnumerable<TipoCuenta> tipoCuentaOrdenados);
     }
 }

@@ -1,12 +1,18 @@
 using ManejoPresupuesto.Interface;
 using ManejoPresupuesto.Repository;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<ITipoCuentasReposritory, TipoCuentaRepository>();
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddTransient<ICuentaRepository, CuentaRepository>();
+builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddTransient<ITransaccionesRepository, TransaccionesRepository>();
+
+builder.Services.AddAutoMapper(_ => { }, typeof(Program));
 
 var app = builder.Build();
 
