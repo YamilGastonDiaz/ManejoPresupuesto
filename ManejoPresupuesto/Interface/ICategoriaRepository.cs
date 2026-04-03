@@ -6,6 +6,7 @@ namespace ManejoPresupuesto.Interface
     {
         Task Crear(Categoria categoria);
         Task<IEnumerable<Categoria>> Obtener(int idUsuario);
+        Task<IEnumerable<Categoria>> Obtener(int idUsuario, TipoTransaccion IdTipoTransaccion);
         Task<Categoria> ObtenerPorId(int id, int idUsuario);
         Task Actualizar(Categoria categoria);
         Task Borrar(int id);

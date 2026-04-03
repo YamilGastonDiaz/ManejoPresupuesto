@@ -18,5 +18,7 @@ namespace ManejoPresupuesto.Models
         public decimal Monto { get; set; }
         [StringLength(maximumLength: 1000, ErrorMessage = "La nota no puede pasar de {1} caracteres")]
         public string Nota   { get; set; }
+        [Display(Name = "Tipo Transacción")]
+        public TipoTransaccion IdTipoTransaccion { get; set; } = TipoTransaccion.Ingreso;
     }
 }

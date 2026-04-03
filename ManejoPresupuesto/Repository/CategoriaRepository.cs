@@ -30,6 +30,14 @@ namespace ManejoPresupuesto.Repository
                                                         WHERE IdUsuario = @IdUsuario", new { idUsuario });
         }
 
+        public async Task<IEnumerable<Categoria>> Obtener(int idUsuario, TipoTransaccion IdTipoTransaccion)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QueryAsync<Categoria>(@"SELECT * FROM Categorias 
+                                                        WHERE IdUsuario = @IdUsuario AND IdTipoTransaccion = @IdTipoTransaccion", 
+                                                        new { idUsuario, IdTipoTransaccion });
+        }
+
         public async Task<Categoria> ObtenerPorId(int id, int idUsuario)
         {
             using var connection = new SqlConnection(_connectionString);
