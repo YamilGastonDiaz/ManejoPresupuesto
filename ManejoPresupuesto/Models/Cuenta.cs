@@ -8,6 +8,7 @@ namespace ManejoPresupuesto.Models
         public int Id { get; set; }
         [Display(Name = "Tipo Cuenta")]
         public int IdTipoCuenta { get; set; }
+        [Display(Name = "Nombre Cuenta")]
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [StringLength(maximumLength: 50)]
         [PrimeraLetraMayuscula]

@@ -20,5 +20,7 @@ namespace ManejoPresupuesto.Models
         public string Nota   { get; set; }
         [Display(Name = "Tipo Transacción")]
         public TipoTransaccion IdTipoTransaccion { get; set; } = TipoTransaccion.Ingreso;
+        public string Categoria { get; set; }
+        public string Cuenta { get; set; }
     }
 }

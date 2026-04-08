@@ -12,14 +12,19 @@ namespace ManejoPresupuesto.Controllers
         private readonly ITipoCuentasReposritory _tipoCuentasReposritory;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ICuentaRepository _cuentaRepository;
+        private readonly ITransaccionesRepository _transaccionesRepository;
+        private readonly IReportesRepository _reportesRepository;
         private readonly IMapper _mapper;
 
         public CuentasController(ITipoCuentasReposritory tipoCuentasReposritory, 
-            IUsuarioRepository usuarioRepository, ICuentaRepository cuentaRepository, IMapper mapper)
+            IUsuarioRepository usuarioRepository, ICuentaRepository cuentaRepository,
+            ITransaccionesRepository transaccionesRepository, IReportesRepository reportesRepository, IMapper mapper)
         {
             _tipoCuentasReposritory = tipoCuentasReposritory;
             _usuarioRepository = usuarioRepository;
             _cuentaRepository = cuentaRepository;
+            _transaccionesRepository = transaccionesRepository;
+            _reportesRepository = reportesRepository;
             _mapper = mapper;
         }
 
@@ -45,6 +50,23 @@ namespace ManejoPresupuesto.Controllers
             var idUsuario = _usuarioRepository.ObtenerUsuarioId();
             var modelo = new CuentaCreacionViewModel();
             modelo.TipsoCuentas = await ObtenerTipoCuentas(idUsuario);
+            return View(modelo);
+        }
+
+        public async Task<IActionResult> Detalle(int id, int mes, int anio)
+        {
+            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var cuenta = await _cuentaRepository.ObtenerPorId(id, idUsuario);
+
+            if (cuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+
+            ViewBag.Cuenta = cuenta.NombreCuenta;
+
+            var modelo = await _reportesRepository.ObtenerTransaccionesDetalladaCuenta(idUsuario, id, mes, anio, ViewBag);
+
             return View(modelo);
         }
 

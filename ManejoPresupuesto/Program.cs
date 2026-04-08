@@ -11,6 +11,8 @@ builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddTransient<ICuentaRepository, CuentaRepository>();
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddTransient<ITransaccionesRepository, TransaccionesRepository>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IReportesRepository, ReportesRepository>();
 
 builder.Services.AddAutoMapper(_ => { }, typeof(Program));
 
@@ -34,7 +36,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Transacciones}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 

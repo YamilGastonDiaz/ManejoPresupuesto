@@ -37,7 +37,7 @@ namespace ManejoPresupuesto.Repository
         public async Task<Cuenta> ObtenerPorId(int id, int idUsuario)
         {
             using var connection = new SqlConnection(_connectionString);
-            return await connection.QueryFirstOrDefaultAsync<Cuenta>(@"SELECT c.Id, c.NombreCuenta, Balance, Descripcion, tc.Id
+            return await connection.QueryFirstOrDefaultAsync<Cuenta>(@"SELECT c.Id, c.NombreCuenta, Balance, Descripcion, IdTipoCuenta
                                                         FROM Cuentas AS c
                                                         INNER JOIN TipoCuentas AS tc
                                                         ON tc.Id = c.IdTipoCuenta

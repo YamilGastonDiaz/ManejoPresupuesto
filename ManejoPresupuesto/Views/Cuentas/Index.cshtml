@@ -23,7 +23,7 @@
             <strong>Activos</strong>
         </div>
         <div class="activo">
-            @FormatearBalance(Model.Where(x => x.Balance > 0).Sum(x => x.Balance));
+            @FormatearBalance(Model.Where(x => x.Balance > 0).Sum(x => x.Balance))
         </div>
     </div>
     <div>
@@ -31,7 +31,7 @@
             <strong>Pasivos</strong>
         </div>
         <div class="pasivo">
-            @FormatearBalance(Model.Where(x => x.Balance < 0).Sum(x => x.Balance));
+            @FormatearBalance(Model.Where(x => x.Balance < 0).Sum(x => x.Balance))
         </div>
     </div>
     <div>
@@ -39,7 +39,7 @@
             <strong>Total</strong>
         </div>
         <div>
-            @FormatearBalance(Model.Sum(x => x.Balance));
+            @FormatearBalance(Model.Sum(x => x.Balance))
         </div>
     </div>
 </div>
@@ -77,7 +77,9 @@
                             <li class="list-group-item">
                                 <span>
                                     <strong>
-                                        @cuenta.NombreCuenta
+                                        <a asp-action="Detalle" asp-route-id="@cuenta.Id">
+                                            @cuenta.NombreCuenta
+                                        </a>
                                     </strong>
                                     <a asp-action="Editar" asp-route-id="@cuenta.Id" class="btn btn-primary">
                                         <i class="bi-pencil-fill"></i>
