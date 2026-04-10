@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Net.NetworkInformation;
 
-namespace ManejoPresupuesto.Repository
+namespace ManejoPresupuesto.Service
 {
     public class TransaccionesRepository : ITransaccionesRepository
     {

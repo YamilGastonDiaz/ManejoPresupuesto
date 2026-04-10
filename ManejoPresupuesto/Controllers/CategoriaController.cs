@@ -7,18 +7,18 @@ namespace ManejoPresupuesto.Controllers
     public class CategoriaController : Controller
     {
         private readonly ICategoriaRepository _categoriaRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IServicioUsuario _servicioUsuario;
 
         public CategoriaController(ICategoriaRepository categoriaRepository, 
-            IUsuarioRepository usuarioRepository)
+            IServicioUsuario servicioUsuario)
         {
             _categoriaRepository = categoriaRepository;
-            _usuarioRepository = usuarioRepository;
+            _servicioUsuario = servicioUsuario;
         }
 
         public async Task<IActionResult> Index()
         {
-            var idUduario = _usuarioRepository.ObtenerUsuarioId();
+            var idUduario = _servicioUsuario.ObtenerUsuarioId();
             var categorias = await _categoriaRepository.Obtener(idUduario);
 
             return View(categorias);
@@ -38,7 +38,7 @@ namespace ManejoPresupuesto.Controllers
                 return View(categoria);
             }
 
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             categoria.IdUsuario = idUsuario;
             await _categoriaRepository.Crear(categoria);
             return RedirectToAction("Index");
@@ -46,7 +46,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Editar(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var categoria = await _categoriaRepository.ObtenerPorId(id, idUsuario);
 
             if (categoria is null)
@@ -60,7 +60,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(Categoria categoriaEditar)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var categoria = await _categoriaRepository.ObtenerPorId(categoriaEditar.Id, idUsuario);
 
             if (categoria is null)
@@ -75,7 +75,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Borrar(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var categoria = await _categoriaRepository.ObtenerPorId(id, idUsuario);
 
             if (categoria is null)
@@ -89,7 +89,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> BorrarCategoria(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var categoria = await _categoriaRepository.ObtenerPorId(id, idUsuario);
 
             if (categoria is null)

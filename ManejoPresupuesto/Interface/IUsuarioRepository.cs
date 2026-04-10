@@ -1,7 +1,10 @@
-﻿namespace ManejoPresupuesto.Interface
+﻿using ManejoPresupuesto.Models;
+
+namespace ManejoPresupuesto.Interface
 {
     public interface IUsuarioRepository
     {
-        public int ObtenerUsuarioId();
+        Task<int> CrearUsuario(Usuario usuario);
+        Task<Usuario> BuscarUsuarioPorEmail(string emailNormalizado);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ManejoPresupuesto.Interface;
 using ManejoPresupuesto.Models;
 
-namespace ManejoPresupuesto.Repository
+namespace ManejoPresupuesto.Service
 {
     public class ReportesRepository : IReportesRepository
     {

@@ -3,7 +3,7 @@ using ManejoPresupuesto.Interface;
 using ManejoPresupuesto.Models;
 using Microsoft.Data.SqlClient;
 
-namespace ManejoPresupuesto.Repository
+namespace ManejoPresupuesto.Service
 {
     public class CuentaRepository : ICuentaRepository
     {

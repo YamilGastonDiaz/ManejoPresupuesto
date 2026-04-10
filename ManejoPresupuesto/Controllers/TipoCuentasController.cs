@@ -1,24 +1,23 @@
 ﻿using ManejoPresupuesto.Interface;
 using ManejoPresupuesto.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace ManejoPresupuesto.Controllers
 {
     public class TipoCuentasController : Controller
     {
         private readonly ITipoCuentasReposritory _reposritory;
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IServicioUsuario _servicioUsuario;
 
-        public TipoCuentasController(ITipoCuentasReposritory reposritory, IUsuarioRepository usuarioRepository)
+        public TipoCuentasController(ITipoCuentasReposritory reposritory, IServicioUsuario servicioUsuario)
         {
             _reposritory = reposritory;
-            _usuarioRepository = usuarioRepository;
+            _servicioUsuario = servicioUsuario;
         }
 
         public async Task<IActionResult> Index()
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tipoCuentas = await _reposritory.Obtener(idUsuario);
 
             return View(tipoCuentas);
@@ -37,7 +36,7 @@ namespace ManejoPresupuesto.Controllers
                 return View(tipoCuenta);
             }
 
-            tipoCuenta.IdUsuario = _usuarioRepository.ObtenerUsuarioId();
+            tipoCuenta.IdUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var existeTipoCuenta = await _reposritory.Existe(tipoCuenta.NombreTipoCuenta, tipoCuenta.IdUsuario);
 
@@ -56,7 +55,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpGet]
         public async Task<ActionResult> Editar(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tipoCuenta = await _reposritory.ObtenerPorId(id, idUsuario);
 
             if (tipoCuenta is null)
@@ -70,7 +69,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<ActionResult> Editar(TipoCuenta tipoCuenta)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tipoCuentaExiste = await _reposritory.ObtenerPorId(tipoCuenta.Id, idUsuario);
 
             if (tipoCuentaExiste is null)
@@ -85,7 +84,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpGet]
         public async Task<ActionResult> Borrar(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tipoCuenta = await _reposritory.ObtenerPorId(id, idUsuario);
 
             if (tipoCuenta is null)
@@ -99,7 +98,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<ActionResult> BorrarTipoCuenta(int Id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tipoCuenta = await _reposritory.ObtenerPorId(Id, idUsuario);
 
             if (tipoCuenta is null)
@@ -115,7 +114,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpGet]
         public async Task<IActionResult> VerificarexisteTipoCuenta(string nombreTipoCuenta)
         {
-            var id_Usuario = _usuarioRepository.ObtenerUsuarioId();
+            var id_Usuario = _servicioUsuario.ObtenerUsuarioId();
             var existeTipoCuenta = await _reposritory.Existe(nombreTipoCuenta, id_Usuario);
 
             if (existeTipoCuenta)
@@ -129,7 +128,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Ordenar([FromBody] int[] ids)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tiposCuenta = await _reposritory.Obtener(idUsuario);
             var idsTipoCuenta = tiposCuenta.Select(x => x.Id);
 

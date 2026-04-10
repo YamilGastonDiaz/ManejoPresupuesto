@@ -3,25 +3,24 @@ using ManejoPresupuesto.Interface;
 using ManejoPresupuesto.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Reflection;
 
 namespace ManejoPresupuesto.Controllers
 {
     public class CuentasController : Controller
     {
         private readonly ITipoCuentasReposritory _tipoCuentasReposritory;
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IServicioUsuario _servicioUsuario;
         private readonly ICuentaRepository _cuentaRepository;
         private readonly ITransaccionesRepository _transaccionesRepository;
         private readonly IReportesRepository _reportesRepository;
         private readonly IMapper _mapper;
 
-        public CuentasController(ITipoCuentasReposritory tipoCuentasReposritory, 
-            IUsuarioRepository usuarioRepository, ICuentaRepository cuentaRepository,
+        public CuentasController(ITipoCuentasReposritory tipoCuentasReposritory,
+            IServicioUsuario servicioUsuario, ICuentaRepository cuentaRepository,
             ITransaccionesRepository transaccionesRepository, IReportesRepository reportesRepository, IMapper mapper)
         {
             _tipoCuentasReposritory = tipoCuentasReposritory;
-            _usuarioRepository = usuarioRepository;
+            _servicioUsuario = servicioUsuario;
             _cuentaRepository = cuentaRepository;
             _transaccionesRepository = transaccionesRepository;
             _reportesRepository = reportesRepository;
@@ -30,7 +29,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var cuentasConTipoCuentas = await _cuentaRepository.Buscar(idUsuario);
 
             var modelo = cuentasConTipoCuentas
@@ -47,7 +46,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpGet]
         public async Task<IActionResult> Crear()
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var modelo = new CuentaCreacionViewModel();
             modelo.TipsoCuentas = await ObtenerTipoCuentas(idUsuario);
             return View(modelo);
@@ -55,7 +54,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Detalle(int id, int mes, int anio)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var cuenta = await _cuentaRepository.ObtenerPorId(id, idUsuario);
 
             if (cuenta is null)
@@ -73,7 +72,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(CuentaCreacionViewModel cuenta)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var tipoCuentas = await _tipoCuentasReposritory.ObtenerPorId(cuenta.IdTipoCuenta, idUsuario);
 
             if (tipoCuentas is null)
@@ -93,7 +92,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Editar(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var cuenta = await _cuentaRepository.ObtenerPorId(id, idUsuario);
 
             if (cuenta is null)
@@ -110,7 +109,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(CuentaCreacionViewModel cuentaEditar)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var cuenta = await _cuentaRepository.ObtenerPorId(cuentaEditar.Id, idUsuario);
 
             if (cuenta is null)
@@ -132,7 +131,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpGet]
         public async Task<IActionResult> Borrar(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var cuenta = await _cuentaRepository.ObtenerPorId(id, idUsuario);
 
             if (cuenta is null)
@@ -146,7 +145,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> BorrarCuenta(int id)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var cuenta = await _cuentaRepository.ObtenerPorId(id, idUsuario);
 
             if (cuenta is null)

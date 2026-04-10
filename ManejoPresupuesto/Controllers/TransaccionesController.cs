@@ -4,12 +4,7 @@ using ManejoPresupuesto.Interface;
 using ManejoPresupuesto.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Data.SqlClient.Diagnostics;
 using System.Data;
-using System.IO.Pipes;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace ManejoPresupuesto.Controllers
 {
@@ -17,18 +12,18 @@ namespace ManejoPresupuesto.Controllers
     {
         private readonly ITransaccionesRepository _transaccionesRepository;
         private readonly ICuentaRepository _cuentaRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IServicioUsuario _servicioUsuario;
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly IReportesRepository _reportesRepository;
         private readonly IMapper _mapper;
 
         public TransaccionesController(ITransaccionesRepository transaccionesRepository,
-            ICuentaRepository cuentaRepository, IUsuarioRepository usuarioRepository,
+            ICuentaRepository cuentaRepository, IServicioUsuario servicioUsuario,
             ICategoriaRepository categoriaRepository, IReportesRepository reportesRepository, IMapper mapper)
         {
             _transaccionesRepository = transaccionesRepository;
             _cuentaRepository = cuentaRepository;
-            _usuarioRepository = usuarioRepository;
+            _servicioUsuario = servicioUsuario;
             _categoriaRepository = categoriaRepository;
             _reportesRepository = reportesRepository;
             _mapper = mapper;
@@ -36,7 +31,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Index(int mes, int anio)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var modelo = await _reportesRepository.ObtenerTransaccionesDetallada(idUsuario, mes, anio, ViewBag);
 
@@ -45,7 +40,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Semanal(int mes, int anio)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             IEnumerable<TransaccionesPorSemana> transaccionesPorSemana = await _reportesRepository.ObtenerReporteSemanal(idUsuario, mes, anio, ViewBag);
 
             var agrupado = transaccionesPorSemana.GroupBy(x => x.Semana).Select(x => new TransaccionesPorSemana()
@@ -103,7 +98,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Mensual(int anio)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             if (anio == 0)
             {
@@ -159,7 +154,7 @@ namespace ManejoPresupuesto.Controllers
         {
             var fechaInicio = new DateTime(anio, mes, 1);
             var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var transacciones = await _transaccionesRepository.ObtenerPorUsuarioId(
                 new TransaccionesPorUsuario
@@ -178,7 +173,7 @@ namespace ManejoPresupuesto.Controllers
         {
             var fechaInicio = new DateTime(anio, 1, 1);
             var fechaFin = fechaInicio.AddYears(1).AddDays(-1);
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var transacciones = await _transaccionesRepository.ObtenerPorUsuarioId(
                 new TransaccionesPorUsuario
@@ -197,7 +192,7 @@ namespace ManejoPresupuesto.Controllers
         {
             var fechaInicio = DateTime.Today.AddYears(-100);
             var fechaFin = DateTime.Today.AddYears(1000);
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var transacciones = await _transaccionesRepository.ObtenerPorUsuarioId(
                new TransaccionesPorUsuario
@@ -256,7 +251,7 @@ namespace ManejoPresupuesto.Controllers
         public async Task<JsonResult> ObtenerTransaccionesCalendario(DateTime start,
            DateTime end)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var transacciones = await _transaccionesRepository.ObtenerPorUsuarioId(
                new TransaccionesPorUsuario
@@ -279,7 +274,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<JsonResult> ObtenerTransaccionesPorFecha(DateTime fecha)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             var transacciones = await _transaccionesRepository.ObtenerPorUsuarioId(
                new TransaccionesPorUsuario
@@ -295,7 +290,7 @@ namespace ManejoPresupuesto.Controllers
 
         public async Task<IActionResult> Crear()
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var modelo = new TransaccionCreacionViewModel();
             modelo.Cuentas = await ObtenerCuentas(idUsuario);
             modelo.Categorias = await ObtenerCategorias(idUsuario, modelo.IdTipoTransaccion);
@@ -306,7 +301,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(TransaccionCreacionViewModel modelo)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             if (!ModelState.IsValid)
             {
@@ -345,7 +340,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpGet]
         public async Task<IActionResult> Editar(int id, string urlRetorno = null)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var transaccion = await _transaccionesRepository.ObtenerPorId(id, idUsuario);
 
             if (transaccion is null)
@@ -373,7 +368,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(TransaccionEditarViewModel modelo)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
 
             if (!ModelState.IsValid)
             {
@@ -419,7 +414,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> Borrar(int id, string urlRetorno = null)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var transaccion = await _transaccionesRepository.ObtenerPorId(id, idUsuario);
 
             if (transaccion is null)
@@ -454,7 +449,7 @@ namespace ManejoPresupuesto.Controllers
         [HttpPost]
         public async Task<IActionResult> ObtenerCategorias([FromBody] TipoTransaccion IdTipoTransaccion)
         {
-            var idUsuario = _usuarioRepository.ObtenerUsuarioId();
+            var idUsuario = _servicioUsuario.ObtenerUsuarioId();
             var categorias = await ObtenerCategorias(idUsuario, IdTipoTransaccion);
             return Ok(categorias);
         }
