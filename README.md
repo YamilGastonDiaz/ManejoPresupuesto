@@ -1,6 +1,6 @@
 # 💰 FinanzasPersonales - Aplicación de Manejo de Presupuestos
 
-## 🚀 Características Clave del Proyecto
+## Características Clave del Proyecto
 
 * **Tablero Visual en Calendario**: Visualización intuitiva de las transacciones mensuales distribuidas directamente sobre una interfaz de calendario interactivo.
 * **Control Completo (CRUD)**: Gestión total de múltiples entidades financieras mediante **Dapper**.
