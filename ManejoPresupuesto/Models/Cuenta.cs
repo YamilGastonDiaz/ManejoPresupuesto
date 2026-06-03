@@ -1,0 +1,21 @@
+﻿using ManejoPresupuesto.Validaciones;
+using System.ComponentModel.DataAnnotations;
+
+namespace ManejoPresupuesto.Models
+{
+    public class Cuenta
+    {
+        public int Id { get; set; }
+        [Display(Name = "Tipo Cuenta")]
+        public int IdTipoCuenta { get; set; }
+        [Display(Name = "Nombre Cuenta")]
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [StringLength(maximumLength: 50)]
+        [PrimeraLetraMayuscula]
+        public string NombreCuenta { get; set; }
+        public decimal Balance { get; set; }
+        [StringLength(maximumLength: 1000)]
+        public string Descripcion { get; set; }
+        public string NombreTipoCuenta { get; set; }
+    }
+}
